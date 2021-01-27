@@ -19,13 +19,8 @@ filmRouter.get(
 );
 
 filmRouter.get(
-  "/title",
-  filmController.getFilmsByTitle,
-);
-
-filmRouter.get(
-  "/star",
-  filmController.getFilmByStar,
+  "/search",
+  filmController.getFilmsByQuery,
 );
 
 filmRouter.get(
