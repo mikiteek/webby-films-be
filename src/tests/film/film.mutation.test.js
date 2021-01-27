@@ -55,6 +55,9 @@ describe("films mutation", () => {
       filmCreated = new Film(testFilm);
       await filmCreated.save();
     });
+    afterAll(async () => {
+      await Film.findByIdAndDelete(filmCreated._id);
+    });
 
     it("should return 400", async () => {
       const response = await request(app)
@@ -70,6 +73,43 @@ describe("films mutation", () => {
       const response = await request(app)
         .delete(`/films/${filmCreated._id}`)
         .expect(200)
+    });
+  });
+
+  describe("GET /films/:id", () => {
+    let filmCreated;
+    beforeAll(async () => {
+      filmCreated = new Film(testFilm);
+      await filmCreated.save();
+    });
+    afterAll(async () => {
+      await Film.findByIdAndDelete(filmCreated._id);
+    });
+
+    it("should return 400", async () => {
+      const response = await request(app)
+        .get(`/films/${filmCreated._id + "a"}`)
+        .set('Content-Type', 'application/json')
+        .expect(400)
+    });
+    it("should return 404", async () => {
+      const response = await request(app)
+        .get(`/films/${testWrongFilmId}`)
+        .set('Content-Type', 'application/json')
+        .expect(404)
+    });
+    it("should return 200", async () => {
+      const response = await request(app)
+        .get(`/films/${filmCreated._id}`)
+        .set('Content-Type', 'application/json')
+        .expect(200)
+      expect(response.body).toEqual(expect.objectContaining({
+        _id: expect.any(String),
+        title: expect.any(String),
+        releaseYear: expect.any(Number),
+        format: expect.any(String),
+        stars: expect.arrayContaining([expect.any(String)])
+      }));
     });
   });
 

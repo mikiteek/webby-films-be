@@ -37,6 +37,24 @@ class FilmController {
       next(error);
     }
   }
+
+  getFilmInfo = async (req, res, next) => {
+    try {
+      const {params: {id}} = req;
+      const valid = validateObjectId(id);
+      if (!valid) {
+        return res.status(400).json(BadRequestError);
+      }
+      const film = await Film.findById(id);
+      if (!film) {
+        return res.status(404).json(NotFoundError);
+      }
+      return res.status(200).json(film);
+    }
+    catch (error) {
+      next(error);
+    }
+  }
 }
 
 module.exports = new FilmController();
