@@ -7,7 +7,7 @@ const swaggerDocument = require("../swagger.json");
 
 const filmRouter = require("./modules/film/film.router");
 
-const dbConnect = require("./utils/database");
+const databaseConnect = require("./utils/database");
 
 const errorMiddleware = require("./middleware/errorMiddleware");
 
@@ -21,7 +21,7 @@ app.use(morgan("combined"));
 app.use("/films", filmRouter);
 app.use("/api-docs", swaggerUi.serve, swaggerUi.setup(swaggerDocument));
 // db
-dbConnect();
+databaseConnect();
 // error's middleware
 app.use(errorMiddleware);
 

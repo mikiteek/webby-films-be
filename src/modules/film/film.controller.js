@@ -1,7 +1,7 @@
 const Film = require("./film.model");
 const {validateAddFilm, validateGetFilmByQuery} = require("../../utils/validateFilm");
 const {validateObjectId} = require("../../utils/validateObjectId");
-const {defineQuerySearch} = require("./film.service");
+const {defineQuerySearch, readFromTxtFiles} = require("./film.service");
 const {BadRequestError, NotFoundError} = require("../error/errors");
 
 class FilmController {
@@ -80,6 +80,17 @@ class FilmController {
         return res.status(404).json(NotFoundError);
       }
       return res.status(200).json(films);
+    }
+    catch (error) {
+      next(error);
+    }
+  }
+
+  uploadFilmsFromFile = async (req, res, next) => {
+    try {
+      const {file} = req;
+      const films = await readFromTxtFiles("uploadedFilmsData/films.txt");
+      return res.status(201).json(films);
     }
     catch (error) {
       next(error);
