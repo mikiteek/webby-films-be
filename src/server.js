@@ -2,6 +2,8 @@ require("dotenv").config();
 const express = require("express");
 const cors = require("cors");
 const morgan = require("morgan");
+const swaggerUi = require("swagger-ui-express");
+const swaggerDocument = require("../swagger.json");
 
 const filmRouter = require("./modules/film/film.router");
 
@@ -17,6 +19,7 @@ app.use(cors());
 app.use(morgan("combined"));
 // routes
 app.use("/films", filmRouter);
+app.use("/api-docs", swaggerUi.serve, swaggerUi.setup(swaggerDocument));
 // db
 dbConnect();
 // error's middleware
