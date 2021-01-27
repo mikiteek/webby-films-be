@@ -3,7 +3,7 @@ const mongoose = require("mongoose");
 
 const Film = require("../../modules/film/film.model");
 const app = require("../../server");
-const {testFilm} = require("./film.variables");
+const {testFilm, testWrongFilmId} = require("./film.variables");
 
 describe("films mutation", () => {
   beforeAll(done => {
@@ -13,8 +13,9 @@ describe("films mutation", () => {
     mongoose.connection.close()
     done()
   });
-  let filmCreated;
+
   describe("POST /films/", () => {
+    let filmCreated;
     afterAll(async () => {
       await Film.findByIdAndDelete(filmCreated._id);
     });
@@ -47,4 +48,29 @@ describe("films mutation", () => {
         .expect(201)
     });
   });
+
+  describe("DELETE /films/:id", () => {
+    let filmCreated;
+    beforeAll(async () => {
+      filmCreated = new Film(testFilm);
+      await filmCreated.save();
+    });
+
+    it("should return 400", async () => {
+      const response = await request(app)
+        .delete(`/films/${filmCreated._id + "a"}`)
+        .expect(400)
+    });
+    it("should return 204", async () => {
+      const response = await request(app)
+        .delete(`/films/${testWrongFilmId}`)
+        .expect(204)
+    });
+    it("should return 200", async () => {
+      const response = await request(app)
+        .delete(`/films/${filmCreated._id}`)
+        .expect(200)
+    });
+  });
+
 })

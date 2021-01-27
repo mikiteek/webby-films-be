@@ -1,6 +1,7 @@
 const Film = require("./film.model");
 const {validateAddFilm} = require("../../utils/validateFilm");
-const {BadRequestError} = require("../error/errors");
+const {validateObjectId} = require("../../utils/validateObjectId");
+const {BadRequestError, NotFoundError} = require("../error/errors");
 
 class FilmController {
   addFilm = async (req, res, next) => {
@@ -13,6 +14,24 @@ class FilmController {
       const film = new Film(body);
       await film.save();
       return res.status(201).json(film);
+    }
+    catch (error) {
+      next(error);
+    }
+  }
+
+  removeFilm = async (req, res, next) => {
+    try {
+      const {params: {id}} = req;
+      const valid = validateObjectId(id);
+      if (!valid) {
+        return res.status(400).json(BadRequestError);
+      }
+      const filmRemoved = await Film.findByIdAndRemove(id);
+      if (!filmRemoved) {
+        return res.status(204).json(NotFoundError);
+      }
+      return res.status(200).json(filmRemoved);
     }
     catch (error) {
       next(error);

@@ -8,4 +8,9 @@ filmRouter.post(
   filmController.addFilm,
 );
 
+filmRouter.delete(
+  "/:id",
+  filmController.removeFilm,
+);
+
 module.exports = filmRouter;
