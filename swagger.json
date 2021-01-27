@@ -1,0 +1,231 @@
+{
+  "swagger": "2.0",
+  "info": {
+    "description": "This is an application for storing info about films",
+    "version": "1.0.2",
+    "title": "Webby Films App",
+    "contact": {
+      "email": "mikiteek@gmail.com"
+    },
+    "license": {
+      "name": "FS29 and FS31",
+      "url": "http://www.apache.org/licenses/LICENSE-2.0.html"
+    }
+  },
+  "schemes": [
+    "http"
+  ],
+  "host": "https://desolate-brook-81952.herokuapp.com",
+  "basePath": "/",
+  "paths": {
+    "/films": {
+      "post": {
+        "tags": ["Films"],
+        "summary": "Add film",
+        "description": "Add film",
+        "produces": [
+          "application/json"
+        ],
+        "consumes": [
+          "application/json"
+        ],
+        "parameters": [
+          {
+            "in": "body",
+            "name": "body",
+            "required": true,
+            "description": "Film's data",
+            "schema": {
+              "$ref": "#/definitions/addFilmBody"
+            }
+          }
+        ],
+        "responses": {
+          "400": {
+            "description": "Wrong body properties"
+          },
+          "201": {
+            "description": "Ok",
+            "schema": {
+              "$ref": "#/definitions/Film"
+            }
+          }
+        }
+      },
+      "get": {
+        "tags": ["Films"],
+        "summary": "Get sorted list of films",
+        "description": "Get sorted list of films",
+        "responses": {
+          "200": {
+            "description": "Ok",
+            "schema": {
+              "$ref": "#/definitions/Films"
+            }
+          }
+        }
+      }
+    },
+    "/films/{id}": {
+      "delete": {
+        "tags": ["Films"],
+        "summary": "Delete film by id",
+        "description": "Delete film by id",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "id",
+            "type": "string",
+            "description": "Id number of Film you want to remove"
+          }
+        ],
+        "responses": {
+          "400": {
+            "description": "Wrong id"
+          },
+          "204": {
+            "description": "No content",
+            "schema": {
+              "type": "object",
+              "example": {
+                "message": "Nothing to remove"
+              }
+            }
+          },
+          "200": {
+            "description": "Ok",
+            "schema": {
+              "$ref": "#/definitions/Film"
+            }
+          }
+        }
+      },
+      "get": {
+        "tags": ["Films"],
+        "summary": "Get film by id",
+        "description": "Get film by id",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "id",
+            "type": "string",
+            "description": "Id number of Film you want to get"
+          }
+        ],
+        "responses": {
+          "400": {
+            "description": "Wrong id"
+          },
+          "404": {
+            "description": "Not found",
+            "schema": {
+              "type": "object",
+              "example": {
+                "message": "Not found"
+              }
+            }
+          },
+          "200": {
+            "description": "Ok",
+            "schema": {
+              "$ref": "#/definitions/Film"
+            }
+          }
+        }
+      }
+    },
+    "/films/search": {
+      "get": {
+        "tags": ["Films"],
+        "summary": "Get list of films by query",
+        "description": "Get list of films by query",
+        "parameters": [
+          {
+            "in": "query",
+            "name": "title",
+            "description": "Title of products you want to get",
+            "schema": {
+              "type": "string",
+              "example": "casablanca"
+            }
+          },
+          {
+            "in": "query",
+            "name": "star",
+            "description": "Star's name you want to get films with",
+            "schema": {
+              "type": "string",
+              "example": "george"
+            }
+          }
+        ],
+        "responses": {
+          "400": {
+            "description": "Bad request, check query params"
+          },
+          "404": {
+            "description": "Not found any films by your query"
+          },
+          "200": {
+            "description": "Ok",
+            "schema": {
+              "$ref": "#/definitions/Films"
+            }
+          }
+        }
+      }
+    }
+  },
+  "definitions": {
+    "addFilmBody": {
+      "type": "object",
+      "properties": {
+        "title": {
+          "type": "string"
+        },
+        "releaseYear": {
+          "type": "number"
+        },
+        "format": {
+          "type": "string"
+        },
+        "stars": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        }
+      }
+    },
+    "Film": {
+      "type": "object",
+      "properties": {
+        "_id": {
+          "type": "string",
+          "uniqueItems": true
+        },
+        "title": {
+          "type": "string"
+        },
+        "releaseYear": {
+          "type": "number"
+        },
+        "format": {
+          "type": "string"
+        },
+        "stars": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        }
+      }
+    },
+    "Films": {
+      "type": "array",
+      "items": {
+        "$ref": "#/definitions/Film"
+      }
+    }
+  }
+}
