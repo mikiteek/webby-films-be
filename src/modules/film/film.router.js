@@ -19,8 +19,18 @@ filmRouter.get(
 );
 
 filmRouter.get(
+  "/title",
+  filmController.getFilmsByTitle,
+);
+
+filmRouter.get(
+  "/star",
+  filmController.getFilmByStar,
+);
+
+filmRouter.get(
   "/:id",
   filmController.getFilmInfo,
-)
+);
 
 module.exports = filmRouter;
