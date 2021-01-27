@@ -14,6 +14,11 @@ filmRouter.delete(
 );
 
 filmRouter.get(
+  "/",
+  filmController.getSortedListFilms,
+);
+
+filmRouter.get(
   "/:id",
   filmController.getFilmInfo,
 )

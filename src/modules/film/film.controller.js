@@ -55,6 +55,16 @@ class FilmController {
       next(error);
     }
   }
+
+  getSortedListFilms = async (req, res, next) => {
+    try {
+      const films = await Film.paginate({}, {sort: {title: "asc"}});
+      return res.status(200).json(films);
+    }
+    catch (error) {
+      next(error);
+    }
+  }
 }
 
 module.exports = new FilmController();
