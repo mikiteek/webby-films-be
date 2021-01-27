@@ -31,7 +31,7 @@ filmRouter.get(
 
 filmRouter.post(
   "/upload",
-  // uploadFiles.single("films"),
+  uploadFiles.single("films"),
   filmController.uploadFilmsFromFile,
 );
 

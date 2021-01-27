@@ -30,7 +30,20 @@ const readFromTxtFiles = async (filePath) => {
     const filmsRead = await fsPromises.readFile(filePath, "utf-8");
     const films = filmsRead.split("\n").join(";").split(";;");
     const toFilms = films.map((item, ind) => {
-      return item
+      const itemObject = item.split(";");
+      const film = itemObject.reduce((prev, cur, ind) => {
+        const value = cur.split(": ")[1];
+        if (!value) {
+          return {
+            ...prev,
+          }
+        }
+        return {
+          ...prev,
+          [fields[ind]]: value,
+        }
+      }, {});
+      return film;
     });
 
     return toFilms;
@@ -40,7 +53,25 @@ const readFromTxtFiles = async (filePath) => {
   }
 }
 
+const readFromJsonFiles = async (filePath) => {
+  const films = JSON.parse(await fsPromises.readFile(filePath, "utf-8"));
+  return films;
+}
+
+const filmsToCorrectType = (films) => {
+  const filmsToReturn = films.map(item => {
+    return {
+      ...item,
+      releaseYear: Number(item.releaseYear),
+      stars: item.stars.split(", ")
+    }
+  })
+  return filmsToReturn;
+}
+
 module.exports = {
   defineQuerySearch,
-  readFromTxtFiles
+  readFromTxtFiles,
+  readFromJsonFiles,
+  filmsToCorrectType,
 }
