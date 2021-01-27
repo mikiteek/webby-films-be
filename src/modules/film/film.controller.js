@@ -1,5 +1,5 @@
 const Film = require("./film.model");
-const {validateAddFilm, validateGetByTitleFilms} = require("../../utils/validateFilm");
+const {validateAddFilm, validateGetByTitleFilms, validateGetByStarFilms} = require("../../utils/validateFilm");
 const {validateObjectId} = require("../../utils/validateObjectId");
 const {BadRequestError, NotFoundError} = require("../error/errors");
 
@@ -74,6 +74,25 @@ class FilmController {
         return res.status(400).json(error.details);
       }
       const querySearch = title ? {title: {"$regex": title, "$options": "i"}}: {};
+      const films = await Film.find(querySearch, null, {sort: {title: "asc"}});
+      if (!films.length) {
+        return res.status(404).json(NotFoundError);
+      }
+      return res.status(200).json(films);
+    }
+    catch (error) {
+      next(error);
+    }
+  }
+
+  getFilmByStar = async (req, res, next) => {
+    try {
+      const {query, query: {star}} = req;
+      const error = validateGetByStarFilms(query);
+      if (error) {
+        return res.status(400).json(error.details);
+      }
+      const querySearch = star ? {stars: {"$regex": star, "$options": "i"}}: {};
       const films = await Film.find(querySearch, null, {sort: {title: "asc"}});
       if (!films.length) {
         return res.status(404).json(NotFoundError);

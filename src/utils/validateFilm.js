@@ -21,7 +21,17 @@ const validateGetByTitleFilms = (query) => {
   return validationResult.error;
 }
 
+const validateGetByStarFilms = (query) => {
+  const validationSchema = Joi.object({
+    star: Joi.string(),
+  });
+
+  const validationResult = validationSchema.validate(query);
+  return validationResult.error;
+}
+
 module.exports = {
   validateAddFilm,
   validateGetByTitleFilms,
+  validateGetByStarFilms,
 }

@@ -24,6 +24,11 @@ filmRouter.get(
 );
 
 filmRouter.get(
+  "/star",
+  filmController.getFilmByStar,
+);
+
+filmRouter.get(
   "/:id",
   filmController.getFilmInfo,
 );
