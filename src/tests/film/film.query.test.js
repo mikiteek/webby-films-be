@@ -57,24 +57,52 @@ describe("films mutation", () => {
         .get("/films/")
         .set('Content-Type', 'application/json')
         .expect(200);
-      expect(response.body).toEqual(expect.objectContaining({
-        totalDocs: expect.any(Number),
-        limit: expect.any(Number),
-        totalPages: expect.any(Number),
-        page: expect.any(Number),
-        pagingCounter: expect.any(Number),
-        hasPrevPage: expect.any(Boolean),
-        hasNextPage: expect.any(Boolean),
-        docs: expect.arrayContaining([
-          expect.objectContaining({
-            _id: expect.any(String),
-            title: expect.any(String),
-            releaseYear: expect.any(Number),
-            format: expect.any(String),
-            stars: expect.arrayContaining([expect.any(String)]),
-          })
-        ])
-      }))
+      expect(response.body).toEqual(expect.arrayContaining([{
+        _id: expect.any(String),
+        title: expect.any(String),
+        releaseYear: expect.any(Number),
+        format: expect.any(String),
+        stars: expect.arrayContaining([expect.any(String)]),
+      }]));
     });
+  });
+
+  describe("GET /films/title?", () => {
+    let filmCreated;
+    beforeAll(async () => {
+      filmCreated = new Film(testFilm);
+      await filmCreated.save();
+    });
+    afterAll(async () => {
+      await Film.findByIdAndDelete(filmCreated._id);
+    });
+    it("should return 400", async () => {
+      const response = await request(app)
+        .get("/films/title?tit=2")
+        .set('Content-Type', 'application/json')
+        .expect(400);
+    });
+
+    it("should return 404", async () => {
+      const response = await request(app)
+        .get("/films/title?title=abracadabrachupacabra")
+        .set('Content-Type', 'application/json')
+        .expect(404);
+    });
+
+    it("should return 200", async () => {
+      const response = await request(app)
+        .get("/films/title?title=" + testFilm.title)
+        .set('Content-Type', 'application/json')
+        .expect(200);
+      expect(response.body).toEqual(expect.arrayContaining([expect.objectContaining({
+        _id: expect.any(String),
+        title: expect.any(String),
+        releaseYear: expect.any(Number),
+        format: expect.any(String),
+        stars: expect.arrayContaining([expect.any(String)]),
+      })]));
+    });
+
   });
 })

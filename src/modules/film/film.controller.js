@@ -1,5 +1,5 @@
 const Film = require("./film.model");
-const {validateAddFilm} = require("../../utils/validateFilm");
+const {validateAddFilm, validateGetByTitleFilms} = require("../../utils/validateFilm");
 const {validateObjectId} = require("../../utils/validateObjectId");
 const {BadRequestError, NotFoundError} = require("../error/errors");
 
@@ -58,7 +58,26 @@ class FilmController {
 
   getSortedListFilms = async (req, res, next) => {
     try {
-      const films = await Film.paginate({}, {sort: {title: "asc"}});
+      const films = await Film.find({}, null, {sort: {title: "asc"}});
+      return res.status(200).json(films);
+    }
+    catch (error) {
+      next(error);
+    }
+  }
+
+  getFilmsByTitle = async (req, res, next) => {
+    try {
+      const {query, query: {title}} = req;
+      const error = validateGetByTitleFilms(query);
+      if (error) {
+        return res.status(400).json(error.details);
+      }
+      const querySearch = title ? {title: {"$regex": title, "$options": "i"}}: {};
+      const films = await Film.find(querySearch, null, {sort: {title: "asc"}});
+      if (!films.length) {
+        return res.status(404).json(NotFoundError);
+      }
       return res.status(200).json(films);
     }
     catch (error) {
