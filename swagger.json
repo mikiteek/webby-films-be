@@ -15,7 +15,7 @@
   "schemes": [
     "http"
   ],
-  "host": "https://desolate-brook-81952.herokuapp.com",
+  "host": "https://calm-woodland-55145.herokuapp.com/",
   "basePath": "/",
   "paths": {
     "/films": {
