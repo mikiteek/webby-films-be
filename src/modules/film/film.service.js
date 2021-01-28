@@ -32,12 +32,12 @@ const readFromTxtFiles = async (filePath) => {
     const toFilms = films.map((item, ind) => {
       const itemObject = item.split(";");
       const film = itemObject.reduce((prev, cur, ind) => {
-        const value = cur.split(": ")[1];
-        if (!value) {
+        if (cur.indexOf(": ") === -1) {
           return {
             ...prev,
           }
         }
+        const value = cur.substr(cur.indexOf(": ") + 2);
         return {
           ...prev,
           [fields[ind]]: value,
