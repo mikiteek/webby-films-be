@@ -1,7 +1,5 @@
 const mongoose = require("mongoose");
-const path = require("path");
 const Film = require("../modules/film/film.model");
-const {readFromJsonFiles} = require("../modules/film/film.service");
 const filmsData = require("../db/films");
 
 const options = {

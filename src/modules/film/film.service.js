@@ -45,7 +45,6 @@ const readFromTxtFiles = async (filePath) => {
       }, {});
       return film;
     });
-
     return toFilms;
   }
   catch (error) {

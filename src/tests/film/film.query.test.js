@@ -57,13 +57,13 @@ describe("films mutation", () => {
         .get("/films/")
         .set('Content-Type', 'application/json')
         .expect(200);
-      expect(response.body).toEqual(expect.arrayContaining([{
+      expect(response.body).toEqual(expect.arrayContaining([expect.objectContaining({
         _id: expect.any(String),
         title: expect.any(String),
         releaseYear: expect.any(Number),
         format: expect.any(String),
         stars: expect.arrayContaining([expect.any(String)]),
-      }]));
+      })]));
     });
   });
 
