@@ -1,8 +1,8 @@
 const {promises: fsPromises} = require("fs");
 const Film = require("./film.model");
-const {validateAddFilm, validateGetFilmByQuery, validateAddFilmsFromFiles} = require("../../utils/validateFilm");
+const {validateAddFilm, validateGetFilmByQuery, validateAddFilmsFromTxt, validateAddFilmsFromJson} = require("../../utils/validateFilm");
 const {validateObjectId} = require("../../utils/validateObjectId");
-const {defineQuerySearch, readFromTxtFiles, filmsToCorrectType, readFromJsonFiles} = require("./film.service");
+const {defineQuerySearch, readFromTxtFiles, filmsToCorrectTypeFromTxt, readFromJsonFiles} = require("./film.service");
 const {BadRequestError, NotFoundError} = require("../error/errors");
 
 class FilmController {
@@ -101,12 +101,12 @@ class FilmController {
         await fsPromises.unlink(file.path);
         return res.status(400).json({message: "Only .txt and json files"});
       }
-      const error = validateAddFilmsFromFiles(filmsFromFile);
+      const error = (file.path.substr(-5, 5) === ".json") ? validateAddFilmsFromJson(filmsFromFile): validateAddFilmsFromTxt(filmsFromFile);
       if (error) {
         await fsPromises.unlink(file.path);
         return res.status(400).json(error.details);
       }
-      const films = filmsToCorrectType(filmsFromFile);
+      const films = (file.path.substr(-5, 5) === ".json") ? filmsFromFile :filmsToCorrectTypeFromTxt(filmsFromFile);
       const addedFilms = await Film.insertMany(films);
       await fsPromises.unlink(file.path);
       return res.status(201).json(addedFilms);

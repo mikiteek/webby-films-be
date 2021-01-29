@@ -58,7 +58,7 @@ const readFromJsonFiles = async (filePath) => {
   return films;
 }
 
-const filmsToCorrectType = (films) => {
+const filmsToCorrectTypeFromTxt = (films) => {
   const filmsToReturn = films.map(item => {
     return {
       ...item,
@@ -73,5 +73,5 @@ module.exports = {
   defineQuerySearch,
   readFromTxtFiles,
   readFromJsonFiles,
-  filmsToCorrectType,
+  filmsToCorrectTypeFromTxt,
 }

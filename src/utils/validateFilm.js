@@ -22,7 +22,7 @@ const validateGetFilmByQuery = (query) => {
   return validationResult.error;
 }
 
-const validateAddFilmsFromFiles = (films) => {
+const validateAddFilmsFromTxt = (films) => {
   const validationSchema = Joi.array().items(Joi.object({
     title: Joi.string().required(),
     releaseYear: Joi.number().integer().greater(1890).required(),
@@ -33,8 +33,21 @@ const validateAddFilmsFromFiles = (films) => {
   return validationResult.error;
 }
 
+const validateAddFilmsFromJson = (films) => {
+  const validationSchema = Joi.array().items(Joi.object({
+    title: Joi.string().required(),
+    releaseYear: Joi.number().integer().greater(1890).required(),
+    format: Joi.string().required(),
+    stars: Joi.array().items(Joi.string()),
+  }));
+  const validationResult = validationSchema.validate(films);
+  return validationResult.error;
+}
+
+
 module.exports = {
   validateAddFilm,
   validateGetFilmByQuery,
-  validateAddFilmsFromFiles,
+  validateAddFilmsFromTxt,
+  validateAddFilmsFromJson,
 }
