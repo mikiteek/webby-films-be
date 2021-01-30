@@ -49,12 +49,19 @@ const readFromTxtFiles = async (filePath) => {
   }
   catch (error) {
     console.log(error.message);
+    return false;
   }
 }
 
 const readFromJsonFiles = async (filePath) => {
-  const films = JSON.parse(await fsPromises.readFile(filePath, "utf-8"));
-  return films;
+  try {
+    const films = JSON.parse(await fsPromises.readFile(filePath, "utf-8"));
+    return films;
+  }
+  catch (error) {
+    console.log(error.message);
+    return false;
+  }
 }
 
 const filmsToCorrectTypeFromTxt = (films) => {

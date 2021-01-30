@@ -101,6 +101,10 @@ class FilmController {
         await fsPromises.unlink(file.path);
         return res.status(400).json({message: "Only .txt and json files"});
       }
+      if (!filmsFromFile) {
+        await fsPromises.unlink(file.path);
+        return res.status(400).json({message: "Bad file"});
+      }
       const error = (file.path.substr(-5, 5) === ".json") ? validateAddFilmsFromJson(filmsFromFile): validateAddFilmsFromTxt(filmsFromFile);
       if (error) {
         await fsPromises.unlink(file.path);
