@@ -1,5 +1,4 @@
 const {promises: fsPromises} = require("fs");
-const path = require("path");
 
 const defineQuerySearch = (title, star) => {
   let querySearch = {};
@@ -22,36 +21,41 @@ const defineQuerySearch = (title, star) => {
     }
   }
   return querySearch;
-}
+};
 
+const FILM_ITEM_FIELDS = ["title", "releaseYear", "format", "stars"];
 const readFromTxtFiles = async (filePath) => {
   try {
-    const fields = ["title", "releaseYear", "format", "stars"];
     const filmsRead = await fsPromises.readFile(filePath, "utf-8");
-    const films = filmsRead.split("\n").join(";").split(";;");
-    const toFilms = films.map((item, ind) => {
-      const itemObject = item.split(";");
-      const film = itemObject.reduce((prev, cur, ind) => {
-        if (cur.indexOf(": ") === -1) {
+    const filmsToStringArrayFormat = filmsRead
+      .split("\n")
+      .join(";")
+      .split(";;");
+
+    const films = filmsToStringArrayFormat.map((item, ind) => {
+      const film = item
+        .split(";")
+        .reduce((prev, cur, ind) => {
+          if (cur.indexOf(": ") === -1) {
+            return {
+              ...prev,
+            }
+          }
+          const value = cur.substr(cur.indexOf(": ") + 2);
           return {
             ...prev,
+            [FILM_ITEM_FIELDS[ind]]: value,
           }
-        }
-        const value = cur.substr(cur.indexOf(": ") + 2);
-        return {
-          ...prev,
-          [fields[ind]]: value,
-        }
-      }, {});
+        }, {});
       return film;
     });
-    return toFilms;
+    return films;
   }
   catch (error) {
     console.log(error.message);
     return false;
   }
-}
+};
 
 const readFromJsonFiles = async (filePath) => {
   try {
@@ -62,7 +66,7 @@ const readFromJsonFiles = async (filePath) => {
     console.log(error.message);
     return false;
   }
-}
+};
 
 const filmsToCorrectTypeFromTxt = (films) => {
   const filmsToReturn = films.map(item => {
@@ -73,7 +77,7 @@ const filmsToCorrectTypeFromTxt = (films) => {
     }
   })
   return filmsToReturn;
-}
+};
 
 module.exports = {
   defineQuerySearch,
