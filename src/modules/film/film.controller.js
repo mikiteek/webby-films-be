@@ -115,6 +115,15 @@ class FilmController {
         await fsPromises.unlink(file.path);
         return res.status(400).json(error.details);
       }
+      const filmsExisted = await Film.find({
+        $or: [
+          ...films,
+        ]
+      });
+      if (filmsExisted.length > 0) {
+        await fsPromises.unlink(file.path);
+        return res.status(409).json(filmsExisted);
+      }
       const addedFilms = await Film.insertMany(films);
       await fsPromises.unlink(file.path);
       return res.status(201).json(addedFilms);
