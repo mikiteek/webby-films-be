@@ -56,6 +56,27 @@
         "tags": ["Films"],
         "summary": "Get sorted list of films",
         "description": "Get sorted list of films",
+        "parameters": [
+          {
+            "in": "query",
+            "name": "page",
+            "description": "Page which you want to get",
+            "default": 1,
+            "schema": {
+              "type": "number",
+              "example": 1
+            }
+          },
+          {
+            "in": "query",
+            "name": "limit",
+            "description": "Limit of items per page",
+            "default": 20,
+            "schema": {
+              "type": "number"
+            }
+          }
+        ],
         "responses": {
           "200": {
             "description": "Ok",
@@ -157,6 +178,25 @@
               "type": "string",
               "example": "george"
             }
+          },
+          {
+            "in": "query",
+            "name": "page",
+            "description": "Page which you want to get",
+            "default": 1,
+            "schema": {
+              "type": "number",
+              "example": 1
+            }
+          },
+          {
+            "in": "query",
+            "name": "limit",
+            "description": "Limit of items per page",
+            "default": 20,
+            "schema": {
+              "type": "number"
+            }
           }
         ],
         "responses": {
@@ -255,9 +295,41 @@
       }
     },
     "Films": {
-      "type": "array",
-      "items": {
-        "$ref": "#/definitions/Film"
+      "type": "object",
+      "properties": {
+        "docs": {
+          "type": "array",
+          "items": {
+            "$ref": "#/definitions/Film"
+          }
+        },
+        "totalDocs": {
+          "type": "number"
+        },
+        "limit": {
+          "type": "number"
+        },
+        "totalPages": {
+          "type": "number"
+        },
+        "page": {
+          "type": "number"
+        },
+        "paginationCounter": {
+          "type": "number"
+        },
+        "hasPrevPage": {
+          "type": "boolean"
+        },
+        "hasNextPage": {
+          "type": "boolean"
+        },
+        "prevPage": {
+          "type": "number"
+        },
+        "nextPage": {
+          "type": "number"
+        }
       }
     }
   }
