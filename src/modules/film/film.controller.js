@@ -82,14 +82,18 @@ class FilmController {
 
   getFilmsByQuery = async (req, res, next) => {
     try {
-      const {query, query: {title, star}} = req;
+      const {query, query: {title, star, page, limit}} = req;
       const error = validateGetFilmByQuery(query);
       if (error) {
         return res.status(400).json(error.details);
       }
+      const paginateOptions = checkQueryParamsReturned({page, limit});
       const querySearch = defineQuerySearch(title, star)
-      const films = await Film.find(querySearch, null, {sort: {title: "asc"}});
-      if (!films.length) {
+      const films = await Film.paginate(querySearch, {
+        ...paginateOptions,
+        ...sortOptions,
+      });
+      if (!films.totalDocs) {
         return res.status(404).json(NotFoundError);
       }
       return res.status(200).json(films);

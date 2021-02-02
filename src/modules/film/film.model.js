@@ -11,13 +11,4 @@ const filmSchema = new Schema({
 
 filmSchema.plugin(mongoosePagination);
 
-async function findByTitle(queryString, options) {
-  const query = queryString
-    ? {title: {"$regex": queryString, "$options": "i"}}
-    : {};
-  return this.paginate(query, options);
-}
-
-filmSchema.statics.findByQuery = findByTitle;
-
 module.exports = mongoose.model("Film", filmSchema);
