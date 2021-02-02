@@ -1,12 +1,14 @@
 const Joi = require("joi");
 
+const filmItemRules = Joi.object({
+  title: Joi.string().required(),
+  releaseYear: Joi.number().integer().greater(1849).less(2021).required(),
+  format: Joi.string().valid("DVD", "VHS", "Blu-Ray").required(),
+  stars: Joi.array().items(Joi.string()).unique().required(),
+});
+
 const validateAddFilm = (body) => {
-  const validationSchema = Joi.object({
-    title: Joi.string().required(),
-    releaseYear: Joi.number().integer().greater(1890).required(),
-    format: Joi.string().required(),
-    stars: Joi.array().items(Joi.string()),
-  });
+  const validationSchema = filmItemRules;
 
   const validationResult = validationSchema.validate(body);
   return validationResult.error;
@@ -22,24 +24,8 @@ const validateGetFilmByQuery = (query) => {
   return validationResult.error;
 }
 
-const validateAddFilmsFromTxt = (films) => {
-  const validationSchema = Joi.array().items(Joi.object({
-    title: Joi.string().required(),
-    releaseYear: Joi.number().integer().greater(1890).required(),
-    format: Joi.string().required(),
-    stars: Joi.string().required(),
-  }));
-  const validationResult = validationSchema.validate(films);
-  return validationResult.error;
-}
-
-const validateAddFilmsFromJson = (films) => {
-  const validationSchema = Joi.array().items(Joi.object({
-    title: Joi.string().required(),
-    releaseYear: Joi.number().integer().greater(1890).required(),
-    format: Joi.string().required(),
-    stars: Joi.array().items(Joi.string()),
-  }));
+const validateAddFilmsFromFile = (films) => {
+  const validationSchema = Joi.array().items(filmItemRules);
   const validationResult = validationSchema.validate(films);
   return validationResult.error;
 }
@@ -48,6 +34,5 @@ const validateAddFilmsFromJson = (films) => {
 module.exports = {
   validateAddFilm,
   validateGetFilmByQuery,
-  validateAddFilmsFromTxt,
-  validateAddFilmsFromJson,
+  validateAddFilmsFromFile,
 }

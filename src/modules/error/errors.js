@@ -1,5 +1,5 @@
-const UserAlreadyExistError = {
-  message: "Such email already exist",
+const AlreadyExistError = {
+  message: "Such item already exist",
 }
 
 const BadRequestError = {
@@ -15,7 +15,7 @@ const UnauthorizedError = {
 }
 
 module.exports = {
-  UserAlreadyExistError,
+  AlreadyExistError,
   BadRequestError,
   NotFoundError,
   UnauthorizedError,

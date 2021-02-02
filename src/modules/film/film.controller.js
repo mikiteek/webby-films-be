@@ -1,9 +1,9 @@
 const {promises: fsPromises} = require("fs");
 const Film = require("./film.model");
-const {validateAddFilm, validateGetFilmByQuery, validateAddFilmsFromTxt, validateAddFilmsFromJson} = require("../../utils/validateFilm");
+const {validateAddFilm, validateGetFilmByQuery, validateAddFilmsFromFile} = require("../../utils/validateFilm");
 const {validateObjectId} = require("../../utils/validateObjectId");
 const {defineQuerySearch, readFromTxtFiles, filmsToCorrectTypeFromTxt, readFromJsonFiles} = require("./film.service");
-const {BadRequestError, NotFoundError} = require("../error/errors");
+const {BadRequestError, NotFoundError, AlreadyExistError} = require("../error/errors");
 
 class FilmController {
   addFilm = async (req, res, next) => {
@@ -12,6 +12,10 @@ class FilmController {
       const error = validateAddFilm(body);
       if (error) {
         return res.status(400).json(error.details);
+      }
+      const isFilmExist = await Film.findOne(body);
+      if (isFilmExist) {
+        return res.status(409).json(AlreadyExistError);
       }
       const film = new Film(body);
       await film.save();
@@ -105,12 +109,21 @@ class FilmController {
         await fsPromises.unlink(file.path);
         return res.status(400).json({message: "Bad file"});
       }
-      const error = (file.path.substr(-5, 5) === ".json") ? validateAddFilmsFromJson(filmsFromFile): validateAddFilmsFromTxt(filmsFromFile);
+      const films = (file.path.substr(-5, 5) === ".json") ? filmsFromFile :filmsToCorrectTypeFromTxt(filmsFromFile);
+      const error = validateAddFilmsFromFile(films);
       if (error) {
         await fsPromises.unlink(file.path);
         return res.status(400).json(error.details);
       }
-      const films = (file.path.substr(-5, 5) === ".json") ? filmsFromFile :filmsToCorrectTypeFromTxt(filmsFromFile);
+      const filmsExisted = await Film.find({
+        $or: [
+          ...films,
+        ]
+      });
+      if (filmsExisted.length > 0) {
+        await fsPromises.unlink(file.path);
+        return res.status(409).json(filmsExisted);
+      }
       const addedFilms = await Film.insertMany(films);
       await fsPromises.unlink(file.path);
       return res.status(201).json(addedFilms);
