@@ -1,4 +1,5 @@
 const mongoose = require("mongoose");
+const mongoosePagination = require("mongoose-paginate-v2");
 const {Schema} = mongoose;
 
 const filmSchema = new Schema({
@@ -7,5 +8,7 @@ const filmSchema = new Schema({
   format: String,
   stars: [{ type: String }],
 });
+
+filmSchema.plugin(mongoosePagination);
 
 module.exports = mongoose.model("Film", filmSchema);
