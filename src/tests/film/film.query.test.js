@@ -5,6 +5,23 @@ const Film = require("../../modules/film/film.model");
 const app = require("../../server");
 const {testFilm, testWrongFilmId, testListFilms} = require("./film.variables");
 
+const filmsSample = {
+  docs: expect.arrayContaining([expect.objectContaining({
+    _id: expect.any(String),
+    title: expect.any(String),
+    releaseYear: expect.any(Number),
+    format: expect.any(String),
+    stars: expect.arrayContaining([expect.any(String)]),
+  })]),
+  totalDocs: expect.any(Number),
+  limit: expect.any(Number),
+  totalPages: expect.any(Number),
+  page: expect.any(Number),
+  pagingCounter: expect.any(Number),
+  hasPrevPage: expect.any(Boolean),
+  hasNextPage: expect.any(Boolean),
+}
+
 describe("films mutation", () => {
   beforeAll(done => {
     done()
@@ -57,25 +74,12 @@ describe("films mutation", () => {
         .get("/films/")
         .set('Content-Type', 'application/json')
         .expect(200);
-      expect(response.body).toEqual(expect.arrayContaining([expect.objectContaining({
-        _id: expect.any(String),
-        title: expect.any(String),
-        releaseYear: expect.any(Number),
-        format: expect.any(String),
-        stars: expect.arrayContaining([expect.any(String)]),
-      })]));
+      expect(response.body).toEqual(expect.objectContaining(filmsSample));
     });
   });
 
   describe("GET /films/search?", () => {
     let filmCreated;
-    let filmSample = {
-      _id: expect.any(String),
-      title: expect.any(String),
-      releaseYear: expect.any(Number),
-      format: expect.any(String),
-      stars: expect.arrayContaining([expect.any(String)]),
-    }
     beforeAll(async () => {
       filmCreated = new Film(testFilm);
       await filmCreated.save();
@@ -109,19 +113,14 @@ describe("films mutation", () => {
         .get("/films/search?title=" + testFilm.title)
         .set('Content-Type', 'application/json')
         .expect(200);
-      expect(response.body).toEqual(expect.arrayContaining([expect.objectContaining(
-        filmSample
-      )]));
+      expect(response.body).toEqual(expect.objectContaining(filmsSample));
     });
     it("should return 200", async () => {
       const response = await request(app)
         .get("/films/search?star=" + testFilm.stars[0])
         .set('Content-Type', 'application/json')
         .expect(200);
-      expect(response.body).toEqual(expect.arrayContaining([expect.objectContaining(
-        filmSample
-      )]));
+      expect(response.body).toEqual(expect.objectContaining(filmsSample));
     });
-
   });
 })
