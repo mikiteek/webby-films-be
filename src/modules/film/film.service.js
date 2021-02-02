@@ -23,6 +23,15 @@ const defineQuerySearch = (title, star) => {
   return querySearch;
 };
 
+const sortOptions = {
+  sort: {
+    title: "asc",
+  },
+  collation: {
+    locale: "en",
+  },
+};
+
 const FILM_ITEM_FIELDS = ["title", "releaseYear", "format", "stars"];
 const readFromTxtFiles = async (filePath) => {
   try {
@@ -79,9 +88,18 @@ const filmsToCorrectTypeFromTxt = (films) => {
   return filmsToReturn;
 };
 
+const checkQueryParamsReturned = ({page=1, limit=20}) => {
+  if (page < 1 || limit < 1 || isNaN(page) || isNaN(limit)) {
+    return false;
+  }
+  return {page: Number(page), limit: Number(limit)}
+}
+
 module.exports = {
   defineQuerySearch,
   readFromTxtFiles,
   readFromJsonFiles,
   filmsToCorrectTypeFromTxt,
+  checkQueryParamsReturned,
+  sortOptions
 }

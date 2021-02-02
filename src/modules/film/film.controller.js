@@ -2,7 +2,7 @@ const {promises: fsPromises} = require("fs");
 const Film = require("./film.model");
 const {validateAddFilm, validateGetFilmByQuery, validateAddFilmsFromFile} = require("../../utils/validateFilm");
 const {validateObjectId} = require("../../utils/validateObjectId");
-const {defineQuerySearch, readFromTxtFiles, filmsToCorrectTypeFromTxt, readFromJsonFiles} = require("./film.service");
+const {defineQuerySearch, readFromTxtFiles, filmsToCorrectTypeFromTxt, readFromJsonFiles, checkQueryParamsReturned, sortOptions} = require("./film.service");
 const {BadRequestError, NotFoundError, AlreadyExistError} = require("../error/errors");
 
 class FilmController {
@@ -64,7 +64,15 @@ class FilmController {
 
   getSortedListFilms = async (req, res, next) => {
     try {
-      const films = await Film.find({}, null, {sort: {title: "asc"}});
+      const {query} = req;
+      const paginateOptions = checkQueryParamsReturned(query);
+      const films = await Film.paginate({}, {
+        ...paginateOptions,
+        ...sortOptions,
+      });
+      if (!films.totalDocs) {
+        return res.status(404).json(NotFoundError);
+      }
       return res.status(200).json(films);
     }
     catch (error) {
