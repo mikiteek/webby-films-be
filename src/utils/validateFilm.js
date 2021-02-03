@@ -18,6 +18,8 @@ const validateGetFilmByQuery = (query) => {
   const validationSchema = Joi.object({
     title: Joi.string(),
     star: Joi.string(),
+    page: Joi.number(),
+    limit: Joi.number(),
   });
 
   const validationResult = validationSchema.validate(query);
